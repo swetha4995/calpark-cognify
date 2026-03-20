@@ -102,8 +102,8 @@ export default function WelcomeHero({ userName, progress = 10 }) {
               }}
               className="absolute w-1 h-1 bg-white rounded-full"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                left: `${(i * 19) % 100}%`,
+                top: `${(i * 31) % 100}%`,
               }}
             />
           ))}

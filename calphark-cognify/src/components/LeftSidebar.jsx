@@ -11,20 +11,20 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  Zap
 } from 'lucide-react';
-import { useState } from 'react';
 
 const menuItems = [
-  { id: 'home', icon: Home, label: 'Home', color: 'from-blue-500 to-cyan-500' },
-  { id: 'roadmap', icon: Map, label: 'Learning Roadmap', color: 'from-purple-500 to-pink-500' },
-  { id: 'lessons', icon: BookOpen, label: 'Lessons', color: 'from-green-500 to-emerald-500' },
-  { id: 'games', icon: Gamepad2, label: 'Practice Games', color: 'from-orange-500 to-amber-500' },
-  { id: 'achievements', icon: Trophy, label: 'Achievements', color: 'from-yellow-500 to-orange-500' },
-  { id: 'leaderboard', icon: Users, label: 'Leaderboard', color: 'from-indigo-500 to-purple-500' },
-  { id: 'analytics', icon: BarChart3, label: 'Progress Analytics', color: 'from-cyan-500 to-blue-500' },
-  { id: 'mentor', icon: Bot, label: 'AI Mentor', color: 'from-pink-500 to-rose-500' },
-  { id: 'settings', icon: Settings, label: 'Settings', color: 'from-gray-500 to-slate-500' },
+  { id: 'home', icon: Home, label: 'Home' },
+  { id: 'roadmap', icon: Map, label: 'Learning Roadmap' },
+  { id: 'lessons', icon: BookOpen, label: 'Lessons' },
+  { id: 'games', icon: Gamepad2, label: 'Practice' },
+  { id: 'achievements', icon: Trophy, label: 'Achievements' },
+  { id: 'leaderboard', icon: Users, label: 'Leaderboard' },
+  { id: 'analytics', icon: BarChart3, label: 'Analytics' },
+  { id: 'mentor', icon: Bot, label: 'AI Mentor' },
+  { id: 'quiz', icon: Zap, label: 'Quiz & Performance' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
 ];
 
 export default function LeftSidebar({ currentView, onNavigate, isCollapsed, onToggleCollapse }) {
@@ -37,102 +37,63 @@ export default function LeftSidebar({ currentView, onNavigate, isCollapsed, onTo
           width: isCollapsed ? '80px' : '280px',
           transition: { duration: 0.3, ease: 'easeInOut' }
         }}
-        className="hidden lg:block fixed left-0 top-[73px] bottom-0 bg-white border-r border-gray-200/50 shadow-sm z-40 overflow-hidden"
+        className="hidden lg:block fixed left-0 top-[73px] bottom-0 bg-white border-r border-slate-200 z-40 overflow-hidden"
       >
         <div className="flex flex-col h-full">
-          {/* Collapse Toggle */}
-          <div className="p-4 border-b border-gray-100">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            {!isCollapsed && <p className="text-xs font-semibold tracking-wide text-slate-400 uppercase">Navigation</p>}
+            <button
               onClick={onToggleCollapse}
-              className="w-full flex items-center justify-center p-2.5 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors"
+              className="h-8 w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition inline-flex items-center justify-center"
             >
-              {isCollapsed ? (
-                <ChevronRight className="w-5 h-5 text-gray-600" />
-              ) : (
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
-              )}
-            </motion.button>
+              {isCollapsed ? <ChevronRight className="w-4 h-4 text-slate-600" /> : <ChevronLeft className="w-4 h-4 text-slate-600" />}
+            </button>
           </div>
 
-          {/* Navigation Menu */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {menuItems.map((item, index) => {
+            {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentView === item.id;
 
               return (
-                <motion.button
+                <button
                   key={item.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ x: 4 }}
                   onClick={() => onNavigate(item.id)}
-                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-200 group relative overflow-hidden ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
                     isActive 
-                      ? 'bg-gradient-to-r ' + item.color + ' text-white shadow-lg shadow-purple-500/20' 
-                      : 'hover:bg-gray-50 text-gray-700'
+                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' 
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent'
                   }`}
                 >
-                  {/* Active indicator */}
                   {isActive && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
+                    <span className="h-5 w-1 rounded-full bg-indigo-600" />
                   )}
 
-                  {/* Icon */}
-                  <div className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-purple-600'} transition-colors`}>
+                  <div className={`flex-shrink-0 ${isActive ? 'text-indigo-700' : 'text-slate-500'}`}>
                     <Icon className="w-5 h-5" />
                   </div>
 
-                  {/* Label */}
                   {!isCollapsed && (
-                    <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-gray-700'}`}>
+                    <span className={`text-sm font-medium ${isActive ? 'text-indigo-700' : 'text-slate-700'}`}>
                       {item.label}
                     </span>
                   )}
-
-                  {/* Sparkle effect on active */}
-                  {isActive && !isCollapsed && (
-                    <Sparkles className="w-4 h-4 text-white/70 ml-auto" />
-                  )}
-                </motion.button>
+                </button>
               );
             })}
           </nav>
 
-          {/* Bottom Section - Daily Challenge */}
           {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="p-4 border-t border-gray-100"
-            >
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-4 text-white shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="text-2xl">🎯</div>
-                  <h4 className="font-bold text-sm">Daily Challenge</h4>
+            <div className="p-4 border-t border-slate-100">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs text-slate-500 mb-1">Daily Goal</p>
+                <p className="text-sm font-medium text-slate-800 mb-3">Complete 5 lessons today</p>
+                <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+                  <div className="h-full w-3/5 rounded-full bg-indigo-500" />
                 </div>
-                <p className="text-xs text-white/90 mb-3">
-                  Complete 5 lessons to earn bonus XP!
-                </p>
-                <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: '60%' }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="h-full bg-white/90 rounded-full"
-                  />
-                </div>
-                <p className="text-xs text-white/80 mt-2">3/5 completed</p>
+                <p className="mt-2 text-xs text-slate-500">3 of 5 completed</p>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </motion.aside>

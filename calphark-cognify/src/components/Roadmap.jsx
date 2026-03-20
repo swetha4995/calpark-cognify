@@ -6,7 +6,6 @@
       <div className="roadmap-path">
         {chapters.map((chapter) => {
           const status = chapter.status;
-          const dot = status === "completed" ? "check" : status === "current" ? "now" : "lock";
           return (
             <div key={chapter.id} className="roadmap-node">
               <div className={`roadmap-node-dot ${status}`}>{status === "completed" ? "checkmark" : status === "current" ? "now" : "lock"}</div>

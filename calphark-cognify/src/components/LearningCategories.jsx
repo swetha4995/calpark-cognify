@@ -74,10 +74,10 @@ export default function LearningCategories({ onSelectCategory }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
+              whileHover={{ y: -4, scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onSelectCategory(category.id)}
-              className="group relative bg-white rounded-[24px] p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden"
+              className="group relative bg-white rounded-[24px] p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
             >
               {/* Gradient Background on Hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${category.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -86,8 +86,8 @@ export default function LearningCategories({ onSelectCategory }) {
               <div className="relative z-10">
                 {/* Icon Container */}
                 <motion.div
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
+                  whileHover={{ rotate: 8, scale: 1.06 }}
+                  transition={{ duration: 0.35 }}
                   className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-[20px] flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow`}
                 >
                   <Icon className="w-8 h-8 text-white" />
@@ -113,14 +113,7 @@ export default function LearningCategories({ onSelectCategory }) {
                 </div>
               </div>
 
-              {/* Emoji Decoration */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                whileHover={{ opacity: 1, scale: 1 }}
-                className="absolute -top-2 -right-2 text-4xl"
-              >
-                {category.emoji}
-              </motion.div>
+              <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-white/40 blur-lg pointer-events-none" />
             </motion.button>
           );
         })}

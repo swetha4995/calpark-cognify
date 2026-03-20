@@ -137,7 +137,7 @@ export default function AnalyticsDashboard() {
         <h3 className="text-xl font-bold text-gray-800 mb-6">Learning Streak</h3>
         <div className="grid grid-cols-7 gap-2 mb-4">
           {[...Array(28)].map((_, i) => {
-            const intensity = Math.random();
+            const intensity = ((i * 13) % 10) / 10;
             return (
               <motion.div
                 key={i}

@@ -1,133 +1,97 @@
 import { motion } from 'framer-motion';
-import { Search, Bell, Settings, Trophy, User, ChevronDown } from 'lucide-react';
+import { Search, Bell, Settings, Trophy, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
 export default function TopNavBar({ user, onNavigate }) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const xpPercent = user ? (user.xp / user.xpMax) * 100 : 0;
+  const xpPercent = user ? Math.round((user.xp / user.xpMax) * 100) : 0;
 
   return (
-    <motion.nav
-      initial={{ y: -20, opacity: 0 }}
+    <motion.header
+      initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 glass border-b border-gray-200/50 shadow-sm"
+      transition={{ duration: 0.25 }}
+      className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl"
     >
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <motion.div
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6 }}
-            className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg"
-          >
-            <span className="text-white text-xl font-bold">C</span>
-          </motion.div>
-          <div className="hidden md:block">
-            <h1 className="text-xl font-bold text-gradient-primary">
-              Calphark Cognify
-            </h1>
-            <p className="text-xs text-gray-600">AI-Powered Learning</p>
+      <div className="h-[72px] px-4 md:px-6 flex items-center justify-between gap-3">
+        <button onClick={() => onNavigate('home')} className="flex items-center gap-3 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+            C
           </div>
-        </div>
+          <div className="hidden sm:block text-left">
+            <h1 className="text-[15px] font-semibold text-slate-900 leading-tight">Calphark Cognify</h1>
+            <p className="text-xs text-slate-500">Learning Platform</p>
+          </div>
+        </button>
 
-        {/* Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
+        <div className="hidden md:flex flex-1 max-w-2xl">
           <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Search lessons, topics, quizzes..."
-              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm"
+              className="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/70 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition"
             />
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-4">
-          {/* XP Progress */}
+        <div className="flex items-center gap-2 md:gap-3 shrink-0">
           {user && (
-            <div className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-warning-50 to-warning-100/50 px-4 py-2 rounded-2xl border border-warning-200/50">
-              <Trophy className="w-5 h-5 text-warning-600" />
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-gray-700">{user.xp} XP</span>
-                  <div className="w-16 h-1.5 bg-warning-200 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${xpPercent}%` }}
-                      className="h-full bg-gradient-to-r from-warning-500 to-warning-600"
-                    />
-                  </div>
+            <div className="hidden lg:flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200 bg-amber-50/70">
+              <Trophy className="w-4 h-4 text-amber-600" />
+              <div className="min-w-[110px]">
+                <div className="flex items-center justify-between text-[11px] text-slate-600 mb-1">
+                  <span>{user.xp} XP</span>
+                  <span>Lv {user.level}</span>
                 </div>
-                <span className="text-xs text-gray-500">Level {user.level}</span>
+                <div className="h-1.5 bg-amber-100 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${xpPercent}%` }}
+                    transition={{ duration: 0.5 }}
+                    className="h-full bg-amber-500 rounded-full"
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          {/* Notifications */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative p-2.5 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors"
-          >
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-          </motion.button>
+          <button className="relative h-10 w-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition">
+            <Bell className="w-4 h-4 text-slate-600 mx-auto" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500" />
+          </button>
 
-          {/* Settings */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={() => onNavigate('settings')}
-            className="hidden md:block p-2.5 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors"
+            className="hidden sm:flex h-10 w-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition items-center justify-center"
           >
-            <Settings className="w-5 h-5 text-gray-600" />
-          </motion.button>
+            <Settings className="w-4 h-4 text-slate-600" />
+          </button>
 
-          {/* User Profile */}
           {user && (
             <div className="relative">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-2 pl-2 pr-3 py-2 bg-gradient-to-r from-primary-50 to-accent-50 hover:from-primary-100 hover:to-accent-100 rounded-2xl transition-all border border-primary-200/50"
+                className="h-10 pl-2.5 pr-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition flex items-center gap-2"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                <div className="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center justify-center">
                   {user.name[0].toUpperCase()}
                 </div>
-                <span className="hidden md:block text-sm font-medium text-gray-700">{user.name}</span>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              </motion.button>
+                <span className="hidden md:block text-sm text-slate-700 font-medium">{user.name}</span>
+                <ChevronDown className="w-4 h-4 text-slate-500" />
+              </button>
 
-              {/* Dropdown */}
               {showDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
-                >
-                  <div className="p-4 bg-gradient-to-r from-primary-50 to-accent-50 border-b border-gray-100">
-                    <p className="font-semibold text-gray-900">{user.name}</p>
-                    <p className="text-xs text-gray-600">Level {user.level} Explorer</p>
-                  </div>
-                  <div className="p-2">
-                    <button className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-xl text-sm text-gray-700 transition-colors">
-                      My Profile
-                    </button>
-                    <button className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-xl text-sm text-gray-700 transition-colors">
-                      Settings
-                    </button>
-                    <button className="w-full text-left px-3 py-2 hover:bg-rose-50 rounded-xl text-sm text-rose-600 transition-colors">
-                      Logout
-                    </button>
-                  </div>
-                </motion.div>
+                <div className="absolute right-0 mt-2 w-52 rounded-xl border border-slate-200 bg-white shadow-lg p-2">
+                  <button className="w-full text-left px-3 py-2 text-sm text-slate-700 rounded-lg hover:bg-slate-50">My Profile</button>
+                  <button onClick={() => onNavigate('settings')} className="w-full text-left px-3 py-2 text-sm text-slate-700 rounded-lg hover:bg-slate-50">Settings</button>
+                  <button className="w-full text-left px-3 py-2 text-sm text-rose-600 rounded-lg hover:bg-rose-50">Sign Out</button>
+                </div>
               )}
             </div>
           )}
         </div>
       </div>
-    </motion.nav>
+    </motion.header>
   );
 }

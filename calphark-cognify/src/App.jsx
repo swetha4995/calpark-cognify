@@ -5,19 +5,22 @@ import LeftSidebar from "./components/LeftSidebar";
 import BottomNavigation from "./components/BottomNavigation";
 import WelcomeHeroSection from "./components/WelcomeHeroSection";
 import XPProgressCard from "./components/XPProgressCard";
-import LearningCategories from "./components/LearningCategories";
 import LessonExplorer from "./components/LessonExplorer";
 import LearningRoadmapComponent from "./components/LearningRoadmapComponent";
 import LeaderboardWidget from "./components/LeaderboardWidget";
-import DailyChallengeCard from "./components/DailyChallengeCard";
 import AnalyticsDashboard from "./components/AnalyticsDashboard";
 import AIMentorCard from "./components/AIMentorCard";
 import AIMentorButton from "./components/AIMentorButton";
+import TodaysTargetsCard from "./components/TodaysTargetsCard";
+import { PerformanceFeedbackDemo } from "./components/PerformanceFeedbackDemo";
+import { QuizResultScreen } from "./components/QuizResultScreen";
+import { QuizIntegration } from "./components/QuizIntegration";
 
 function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState("home");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [performanceLevel, setPerformanceLevel] = useState(null); // Track performance level for persistent background
 
   const handleLogin = (userData) => {
     setUser({
@@ -46,27 +49,25 @@ function App() {
     switch (currentView) {
       case 'home':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <WelcomeHeroSection 
               userName={user.name}
               onStartLearning={() => handleNavigate('lessons')}
             />
             
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+            <div className="grid xl:grid-cols-12 gap-6">
+              <div className="xl:col-span-8 space-y-6">
                 <XPProgressCard user={user} />
+                <LearningRoadmapComponent />
               </div>
-              <div className="lg:col-span-1">
+
+              <div className="xl:col-span-4 space-y-6">
                 <AIMentorCard onOpenMentor={() => handleNavigate('mentor')} />
+                <TodaysTargetsCard />
+                <LeaderboardWidget />
               </div>
             </div>
-            
-            <div className="grid lg:grid-cols-2 gap-6">
-              <DailyChallengeCard />
-              <LeaderboardWidget />
-            </div>
-            
-            <LearningCategories onSelectCategory={handleNavigate} />
+
             <LessonExplorer onStartLesson={(id) => console.log('Start lesson:', id)} />
           </div>
         );
@@ -168,6 +169,45 @@ function App() {
           </div>
         );
       
+      case 'quiz':
+        return (
+          <div className="space-y-6">
+            <div className="card-premium p-8">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-3xl">⚡</span>
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Quiz & Performance Demo</h1>
+                    <p className="text-gray-600 mt-1">Take a quiz to see the performance feedback system in action</p>
+                  </div>
+                </div>
+                {performanceLevel && (
+                  <button
+                    onClick={() => setPerformanceLevel(null)}
+                    className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-all"
+                  >
+                    Reset Background
+                  </button>
+                )}
+              </div>
+            </div>
+            <QuizIntegration 
+              onQuizComplete={(score) => {
+                // Determine performance level based on score
+                if (score >= 80) {
+                  setPerformanceLevel('high');
+                } else if (score >= 50) {
+                  setPerformanceLevel('average');
+                } else {
+                  setPerformanceLevel('low');
+                }
+              }}
+            />
+          </div>
+        );
+      
       default:
         return (
           <div className="card-premium p-12 text-center">
@@ -180,13 +220,16 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
-      {/* Professional Background Layers */}
-      <div className="fixed inset-0 bg-gradient-to-br from-primary-50/50 via-white to-accent-50/30 pointer-events-none" />
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-primary-200/20 rounded-full filter blur-3xl opacity-70 animate-pulse-slow" />
-        <div className="absolute bottom-0 -right-4 w-96 h-96 bg-accent-200/20 rounded-full filter blur-3xl opacity-70 animate-pulse-slow" style={{animationDelay: '1s'}} />
-      </div>
+    <div className={`min-h-screen relative overflow-hidden transition-all duration-1000 ease-out ${
+      performanceLevel === 'high' 
+        ? 'bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50' 
+        : performanceLevel === 'average'
+        ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-lavender-50'
+        : performanceLevel === 'low'
+        ? 'bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50'
+        : 'bg-slate-50'
+    }`}>
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,#eef2ff,transparent_55%),linear-gradient(to_bottom,#f8fafc,#f8fafc)] pointer-events-none" />
 
       {/* Main App Container */}
       <div className="relative z-10">
@@ -205,8 +248,8 @@ function App() {
               sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'
             }`}
           >
-            <div className="container-professional py-6 md:py-8">
-              <div className="animate-fade-in">
+            <div className="container-professional py-6 md:py-7">
+              <div className="animate-fade-in max-w-[1240px] mx-auto">
                 {renderMainContent()}
               </div>
             </div>

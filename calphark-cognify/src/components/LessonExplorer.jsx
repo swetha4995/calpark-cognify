@@ -99,107 +99,81 @@ const getDifficultyColor = (difficulty) => {
 
 export default function LessonExplorer({ onStartLesson }) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">Explore Lessons</h2>
-          <p className="text-gray-500">Continue where you left off or start something new</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-1">Lessons</h2>
+          <p className="text-sm text-slate-500">Continue your active modules or start the next lesson.</p>
         </div>
-        <button className="text-purple-600 font-semibold hover:text-purple-700 transition-colors">
-          View All →
+        <button className="text-sm text-indigo-600 font-medium hover:text-indigo-700 transition-colors">
+          View all
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {lessons.map((lesson, index) => (
           <motion.div
             key={lesson.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ y: -4 }}
-            className={`relative bg-white rounded-[24px] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 ${
+            transition={{ delay: index * 0.05 }}
+            whileHover={{ y: -2 }}
+            className={`rounded-xl border p-4 transition shadow-sm hover:shadow-md ${
               lesson.isLocked ? 'opacity-75' : ''
-            }`}
+            } ${lesson.isCompleted ? 'border-emerald-200 bg-emerald-50/40' : 'border-slate-200 bg-white'}`}
           >
-            {/* Gradient Header */}
-            <div className={`relative h-32 bg-gradient-to-br ${lesson.bgColor} flex items-center justify-center overflow-hidden`}>
-              {/* Decorative circles */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full -translate-y-12 translate-x-12" />
-              <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full translate-y-10 -translate-x-10" />
-              
-              {/* Illustration */}
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                className="text-6xl relative z-10"
-              >
-                {lesson.illustration}
-              </motion.div>
-
-              {/* Difficulty Badge */}
-              <div className={`absolute top-3 left-3 px-3 py-1 border rounded-full text-xs font-semibold ${getDifficultyColor(lesson.difficulty)}`}>
-                {lesson.difficulty}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <div className={`inline-flex items-center text-[11px] px-2 py-1 rounded-md border mb-2 ${getDifficultyColor(lesson.difficulty)}`}>
+                  {lesson.difficulty}
+                </div>
+                <h3 className="text-base font-semibold text-slate-900 leading-snug">
+                {lesson.title}
+                </h3>
               </div>
 
-              {/* Completion/Lock Badge */}
-              {lesson.isCompleted && (
-                <div className="absolute top-3 right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              )}
-              {lesson.isLocked && (
-                <div className="absolute top-3 right-3 w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center shadow-lg">
-                  <Lock className="w-4 h-4 text-white" />
-                </div>
-              )}
+              <div className="text-2xl leading-none">{lesson.illustration}</div>
             </div>
 
-            {/* Content */}
-            <div className="p-5">
-              <h3 className="text-lg font-bold text-gray-800 mb-2">
-                {lesson.title}
-              </h3>
-
-              {/* Progress Bar */}
+            <div className="mb-4">
               {!lesson.isLocked && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <>
+                  <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
                     <span>Progress</span>
                     <span className="font-semibold">{lesson.progress}/{lesson.total}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(lesson.progress / lesson.total) * 100}%` }}
-                      transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
-                      className={`h-full bg-gradient-to-r ${lesson.color} rounded-full`}
+                      transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
+                      className="h-full bg-indigo-600 rounded-full"
                     />
                   </div>
-                </div>
+                </>
               )}
+            </div>
 
-              {/* Meta Info */}
-              <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
+            <div className="flex items-center gap-3 mb-4 text-xs text-slate-500">
                 <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3.5 h-3.5" />
                   <span>{lesson.duration}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  <span className="font-semibold text-yellow-600">{lesson.xp} XP</span>
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                  <span className="font-semibold text-slate-700">{lesson.xp} XP</span>
                 </div>
-              </div>
+            </div>
 
-              {/* Action Button */}
               {lesson.isLocked ? (
-                <button disabled className="w-full bg-gray-200 text-gray-500 font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed">
+                <button disabled className="w-full h-10 bg-slate-100 text-slate-500 text-sm font-medium rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
                   <Lock className="w-4 h-4" />
                   <span>Locked</span>
                 </button>
               ) : lesson.isCompleted ? (
                 <button
                   onClick={() => onStartLesson(lesson.id)}
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                  className="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition"
                 >
                   <TrendingUp className="w-4 h-4" />
                   <span>Review</span>
@@ -207,7 +181,7 @@ export default function LessonExplorer({ onStartLesson }) {
               ) : lesson.progress > 0 ? (
                 <button
                   onClick={() => onStartLesson(lesson.id)}
-                  className={`w-full bg-gradient-to-r ${lesson.color} hover:opacity-90 text-white font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all`}
+                  className="w-full h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition"
                 >
                   <Play className="w-4 h-4 fill-white" />
                   <span>Continue</span>
@@ -215,16 +189,15 @@ export default function LessonExplorer({ onStartLesson }) {
               ) : (
                 <button
                   onClick={() => onStartLesson(lesson.id)}
-                  className={`w-full bg-gradient-to-r ${lesson.color} hover:opacity-90 text-white font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all`}
+                  className="w-full h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition"
                 >
                   <Play className="w-4 h-4 fill-white" />
                   <span>Start Lesson</span>
                 </button>
               )}
-            </div>
           </motion.div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

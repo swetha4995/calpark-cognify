@@ -30,8 +30,8 @@ export default function DailyChallengeCard() {
             }}
             className="absolute w-2 h-2 bg-white rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${(i * 17) % 100}%`,
+              top: `${(i * 29) % 100}%`,
             }}
           />
         ))}

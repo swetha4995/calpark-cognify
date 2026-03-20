@@ -41,15 +41,15 @@ function Login({ onLogin }) {
               scale: [0.8, 1.2, 0.8],
             }}
             transition={{
-              duration: 3 + Math.random() * 3,
+              duration: 3 + (i % 4) * 0.6,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: (i % 6) * 0.35,
             }}
             className="absolute text-gray-300"
             style={{
-              left: `${5 + Math.random() * 90}%`,
-              top: `${5 + Math.random() * 90}%`,
-              fontSize: `${10 + Math.random() * 12}px`,
+              left: `${5 + ((i * 37) % 90)}%`,
+              top: `${5 + ((i * 53) % 90)}%`,
+              fontSize: `${10 + ((i * 7) % 12)}px`,
             }}
           >
             ⭐
