@@ -5,7 +5,7 @@
  * Extended animation: lasting until user taps, with multiple emoji waves and glow effects
  */
 /* eslint-disable react-hooks/purity */
-import { useEffect, useRef, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
   const { playSound } = useSound();
   const { performanceLevel, getThemeClass, message, messageColor } = usePerformanceTheme(score);
   const confettiRef = useRef(null);
+  const confettiCanvasRef = useRef(null);
   const [showAnimation, setShowAnimation] = useState(true);
 
   // Memoize particles to avoid recalculation on every render
@@ -32,12 +33,32 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
     }));
   }, []);
 
+  const cleanupConfetti = useCallback(() => {
+    confettiRef.current?.reset?.();
+    confettiRef.current = null;
+
+    if (confettiCanvasRef.current) {
+      confettiCanvasRef.current.remove();
+      confettiCanvasRef.current = null;
+    }
+  }, []);
+
   const triggerConfetti = useRef((intensity = 1) => {
     if (!confettiRef.current) {
       const canvas = document.createElement('canvas');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      canvas.setAttribute('aria-hidden', 'true');
+      Object.assign(canvas.style, {
+        position: 'fixed',
+        inset: '0',
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: '70',
+      });
       document.body.appendChild(canvas);
+      confettiCanvasRef.current = canvas;
       confettiRef.current = confetti.create(canvas, { resize: true, useWorker: true });
     }
 
@@ -88,14 +109,14 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
     let confettiIntensity = 0;
 
     if (score >= 80) {
-      soundType = 'success';
+      soundType = 'applause';
       confettiIntensity = 1;
     } else if (score < 50) {
-      soundType = 'motivation';
-      confettiIntensity = 0.5;
+      soundType = 'softFail';
+      confettiIntensity = 0.25;
     } else {
       soundType = 'neutral';
-      confettiIntensity = 0.3;
+      confettiIntensity = 0.45;
     }
 
     const timers = [];
@@ -124,20 +145,42 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
     };
   }, [score, isOpen, showAnimation, playSound, triggerConfetti]);
 
+  useEffect(() => {
+    if (!isOpen || !showAnimation) {
+      cleanupConfetti();
+    }
+
+    return () => {
+      cleanupConfetti();
+    };
+  }, [cleanupConfetti, isOpen, showAnimation]);
+
   if (!isOpen || !showAnimation) return null;
 
   const handleDismiss = () => {
+    cleanupConfetti();
     setShowAnimation(false);
     if (onAnimationComplete) {
       onAnimationComplete();
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Escape') {
+      event.preventDefault();
+      handleDismiss();
+    }
+  };
+
   return (
     <AnimatePresence>
-      <div 
-        className="fixed inset-0 pointer-events-none z-50 cursor-pointer"
+      <div
+        className="fixed inset-0 pointer-events-auto z-50 cursor-pointer"
         onClick={handleDismiss}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-label="Dismiss performance feedback and continue"
       >
         {/* Background gradient transition */}
         <motion.div
@@ -155,12 +198,12 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
         {/* Main feedback message */}
         <motion.div
           key="message"
-          className="fixed inset-0 flex flex-col items-center justify-center pointer-events-auto cursor-default"
+          className="fixed inset-0 flex flex-col items-center justify-center pointer-events-auto cursor-pointer"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleDismiss}
         >
           <div className="relative">
             {/* Multiple glow layers for enhanced effect */}
@@ -200,8 +243,20 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
               className={`relative bg-white/85 backdrop-blur-xl rounded-2xl px-6 sm:px-8 py-6 sm:py-8 shadow-2xl border border-white/30 ${
                 performanceLevel === 'high' ? 'shadow-purple-200/50' : 'shadow-gray-200/50'
               }`}
-              animate={performanceLevel === 'high' ? { y: [0, -12, 0], boxShadow: ['0 10px 30px rgba(147, 51, 234, 0.2)', '0 20px 50px rgba(147, 51, 234, 0.4)', '0 10px 30px rgba(147, 51, 234, 0.2)'] } : { y: 0 }}
-              transition={performanceLevel === 'high' ? { duration: 2, repeat: Infinity } : {}}
+              animate={
+                performanceLevel === 'high'
+                  ? { y: [0, -12, 0], boxShadow: ['0 10px 30px rgba(147, 51, 234, 0.2)', '0 20px 50px rgba(147, 51, 234, 0.4)', '0 10px 30px rgba(147, 51, 234, 0.2)'] }
+                  : performanceLevel === 'low'
+                  ? { x: [0, -3, 3, -2, 2, 0] }
+                  : { y: [0, -4, 0] }
+              }
+              transition={
+                performanceLevel === 'high'
+                  ? { duration: 2, repeat: Infinity }
+                  : performanceLevel === 'low'
+                  ? { duration: 0.55, repeat: 3 }
+                  : { duration: 2.4, repeat: Infinity }
+              }
             >
               <div className="flex items-center gap-3 sm:gap-4 justify-center flex-wrap">
                 {performanceLevel === 'high' && (
@@ -239,6 +294,20 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
                   {performanceLevel} Performance
                 </p>
               </motion.div>
+
+              <motion.button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDismiss();
+                }}
+                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-colors hover:bg-slate-800"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.4 }}
+              >
+                Continue
+              </motion.button>
             </motion.div>
           </div>
 
@@ -248,7 +317,7 @@ export const PerformanceFeedbackSystem = ({ score, isOpen = true, onAnimationCom
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <p className="text-white text-sm sm:text-base font-medium drop-shadow-lg">Tap to continue</p>
+            <p className="text-white text-sm sm:text-base font-medium drop-shadow-lg">Tap anywhere to continue</p>
             <motion.div
               className="w-6 h-10 border-2 border-white rounded-full flex items-start justify-center p-1"
               animate={{ opacity: [0.5, 1, 0.5] }}
