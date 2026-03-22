@@ -9,14 +9,14 @@ const navItems = [
   { id: 'mentor', icon: Bot, label: 'Mentor' },
 ];
 
-export default function BottomNavigation({ currentView, onNavigate }) {
+export default function BottomNavigation({ currentView, onNavigate, isDark = false }) {
   return (
     <motion.nav
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       className="lg:hidden fixed bottom-0 left-0 right-0 z-50"
     >
-      <div className="bg-white/95 backdrop-blur-xl border-t border-slate-200 shadow-lg">
+      <div className={`backdrop-blur-xl border-t shadow-lg ${isDark ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}>
         <div className="flex items-center justify-around px-4 py-3 max-w-md mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -26,7 +26,9 @@ export default function BottomNavigation({ currentView, onNavigate }) {
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className={`relative flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition ${isActive ? 'text-indigo-600' : 'text-slate-500'}`}
+                className={`relative flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition ${
+                  isActive ? 'text-indigo-600' : isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}
               >
                 {isActive && (
                   <span className="absolute -top-1 h-1.5 w-8 rounded-full bg-indigo-600" />
@@ -45,7 +47,7 @@ export default function BottomNavigation({ currentView, onNavigate }) {
         </div>
       </div>
 
-      <div className="h-safe bg-white/95 backdrop-blur-xl" />
+      <div className={`h-safe backdrop-blur-xl ${isDark ? 'bg-slate-900/95' : 'bg-white/95'}`} />
     </motion.nav>
   );
 }

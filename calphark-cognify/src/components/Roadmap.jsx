@@ -12,7 +12,11 @@
               <div className={`roadmap-card ${status}`}>
                 <div className="roadmap-chapter-top">
                   <h3 className="roadmap-chapter-title"><span className="roadmap-chapter-icon">{chapter.icon} </span>{chapter.title}</h3>
-                  {status === "completed" && <span className="roadmap-score-badge">{chapter.score}%</span>}
+                  {status === "completed" && (
+                    <span className="roadmap-score-badge">
+                      {Number.isFinite(chapter.score) ? `${chapter.score}%` : 'Completed'}
+                    </span>
+                  )}
                 </div>
                 <p className="roadmap-chapter-desc">{chapter.description}</p>
                 {status === "current" && chapter.progress !== undefined && (

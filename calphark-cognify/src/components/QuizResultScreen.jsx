@@ -16,11 +16,18 @@ export const QuizResultScreen = ({
   onContinue,
   onRetry,
 }) => {
-  const [showFeedback] = useState(true);
+  const [showFeedback, setShowFeedback] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
 
   const handleAnimationComplete = () => {
+    setShowFeedback(false);
     setAnimationComplete(true);
+  };
+
+  const handleRetryClick = () => {
+    setShowFeedback(true);
+    setAnimationComplete(false);
+    onRetry?.();
   };
 
   return (
@@ -143,7 +150,7 @@ export const QuizResultScreen = ({
             </motion.button>
 
             <motion.button
-              onClick={onRetry}
+              onClick={handleRetryClick}
               className="w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 rounded-xl border border-gray-200 transition-all duration-300 flex items-center justify-center gap-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
